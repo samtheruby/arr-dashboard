@@ -21,6 +21,7 @@ export const TrashGuidesTabs = ({ activeTab, onTabChange }: TrashGuidesTabsProps
 	const tabs: Array<{ id: TrashGuidesTab; label: string }> = [
 		{ id: "templates", label: "Templates" },
 		{ id: "custom-formats", label: "Custom Formats" },
+		{ id: "personal-cfs", label: "Personal Custom Formats" },
 		{ id: "bulk-scores", label: "Bulk Score Management" },
 		{ id: "history", label: "Deployment History" },
 		{ id: "scheduler", label: "Update Scheduler" },

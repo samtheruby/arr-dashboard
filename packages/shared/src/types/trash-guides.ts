@@ -196,15 +196,35 @@ export interface TrashCacheStatus {
 // ============================================================================
 
 /**
- * Custom Format with user customizations
+ * Custom Format with user customizations (from TRaSH Guides)
  */
 export interface TemplateCustomFormat {
+	type?: "trash"; // Discriminator (optional for backward compatibility)
 	trashId: string;
 	name: string;
 	score?: number; // Current score (either from scoreOverride or originalConfig.score)
 	scoreOverride?: number; // User-defined score
 	conditionsEnabled: Record<string, boolean>; // Which conditions are enabled
 	originalConfig: TrashCustomFormat; // Original TRaSH config
+}
+
+/**
+ * Personal Custom Format in template (user-created)
+ */
+export interface TemplatePersonalCustomFormat {
+	type: "personal"; // Discriminator
+	personalCFId: string;
+	name: string;
+	score?: number; // Current score (either from scoreOverride or default)
+	scoreOverride?: number; // User-defined score
+	conditionsEnabled: Record<string, boolean>; // Which conditions are enabled
+	originalConfig: {
+		id: string;
+		name: string;
+		version: number;
+		includeCustomFormatWhenRenaming: boolean;
+		specifications: CustomFormatSpecification[];
+	};
 }
 
 /**
@@ -221,7 +241,7 @@ export interface TemplateCustomFormatGroup {
  * Template configuration data
  */
 export interface TemplateConfig {
-	customFormats: TemplateCustomFormat[];
+	customFormats: (TemplateCustomFormat | TemplatePersonalCustomFormat)[];
 	customFormatGroups: TemplateCustomFormatGroup[];
 	qualityProfile?: {
 		upgradeAllowed?: boolean;

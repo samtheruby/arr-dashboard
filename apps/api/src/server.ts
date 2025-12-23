@@ -25,6 +25,8 @@ import { registerSearchRoutes } from "./routes/search.js";
 import { registerServiceRoutes } from "./routes/services.js";
 import { registerSystemRoutes } from "./routes/system.js";
 import { registerTrashGuidesRoutes } from "./routes/trash-guides/index.js";
+import { registerPersonalCFRoutes } from "./routes/personal-custom-formats.js";
+import { registerPersonalCFDeploymentRoutes } from "./routes/personal-custom-formats-deployment.js";
 
 export type ServerOptions = {
 	logger?: boolean;
@@ -108,6 +110,8 @@ export const buildServer = (options: ServerOptions = {}): FastifyInstance => {
 	app.register(registerBackupRoutes, { prefix: "/api/backup" });
 	app.register(registerSystemRoutes, { prefix: "/api/system" });
 	app.register(registerTrashGuidesRoutes, { prefix: "/api/trash-guides" });
+	app.register(registerPersonalCFRoutes, { prefix: "/api/personal-custom-formats" });
+	app.register(registerPersonalCFDeploymentRoutes, { prefix: "/api/personal-custom-formats" });
 	app.register(registerHuntingRoutes, { prefix: "/api" });
 
 	return app;

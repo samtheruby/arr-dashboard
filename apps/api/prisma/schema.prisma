@@ -27,8 +27,9 @@ model User {
   sessions            Session[]
   oidcAccounts        OIDCAccount[]
   webauthnCredentials WebAuthnCredential[]
-  trashSettings       TrashSettings?
-  serviceInstances    ServiceInstance[]
+  trashSettings        TrashSettings?
+  serviceInstances     ServiceInstance[]
+  personalCustomFormats PersonalCustomFormat[]
 }
 
 model Session {
@@ -81,6 +82,7 @@ model ServiceInstance {
   standaloneCFDeployments     StandaloneCFDeployment[]
   huntConfig                  HuntConfig?
   huntLogs                    HuntLog[]
+  personalCFDeployments       PersonalCFDeployment[]
 
   @@index([service])
   @@index([userId])
@@ -510,6 +512,64 @@ model StandaloneCFDeployment {
   @@index([instanceId])
   @@index([commitHash])
   @@map("standalone_cf_deployments")
+}
+
+// ============================================================================
+// Personal Custom Format Models
+// User-created custom formats (not from TRaSH Guides)
+// ============================================================================
+
+model PersonalCustomFormat {
+  id                              String   @id @default(cuid())
+  userId                          String
+  name                            String
+  serviceType                     ServiceType // RADARR or SONARR
+  includeCustomFormatWhenRenaming Boolean  @default(false)
+
+  // Specification storage (JSON string)
+  // Array of CustomFormatSpecification objects
+  specifications                  String   // JSON array
+
+  // Versioning
+  version                         Int      @default(1)
+
+  // Metadata
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+  deletedAt                       DateTime? // Soft delete
+
+  // Relations
+  user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deployments PersonalCFDeployment[]
+
+  @@unique([userId, name, serviceType]) // Prevent duplicate names per service type
+  @@index([userId])
+  @@index([serviceType])
+  @@index([deletedAt])
+  @@map("personal_custom_formats")
+}
+
+// Personal Custom Format Deployment Tracking
+// Tracks personal CFs deployed to instances with version snapshots
+model PersonalCFDeployment {
+  id                    String               @id @default(cuid())
+  userId                String
+  personalCFId          String
+  instanceId            String
+  instanceCFId          Int                  // ID in the ARR instance
+  deployedVersion       Int                  // Version deployed
+  deployedSpecsSnapshot String               // JSON snapshot of specs at deployment time
+  deployedAt            DateTime             @default(now())
+
+  // Relations
+  personalCF PersonalCustomFormat @relation(fields: [personalCFId], references: [id], onDelete: Cascade)
+  instance   ServiceInstance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@unique([instanceId, personalCFId])
+  @@index([userId])
+  @@index([personalCFId])
+  @@index([instanceId])
+  @@map("personal_cf_deployments")
 }
 
 // ============================================================================

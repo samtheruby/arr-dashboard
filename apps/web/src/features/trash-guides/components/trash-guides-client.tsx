@@ -10,6 +10,7 @@ import { SchedulerStatusDashboard } from "./scheduler-status-dashboard";
 import { DeploymentHistoryTable } from "./deployment-history-table";
 import { BulkScoreManager } from "./bulk-score-manager";
 import { CustomFormatsBrowser } from "./custom-formats-browser";
+import { PersonalCFClient } from "./personal-cf-client";
 import {
 	TrashGuidesTabs,
 	CacheStatusSection,
@@ -189,6 +190,8 @@ export const TrashGuidesClient = () => {
 				</div>
 			) : activeTab === "custom-formats" ? (
 				<CustomFormatsBrowser />
+			) : activeTab === "personal-cfs" ? (
+				<PersonalCFClient />
 			) : (
 				<TemplateList
 					onCreateNew={handleCreateNew}
